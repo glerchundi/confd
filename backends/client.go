@@ -8,6 +8,7 @@ import (
 	"github.com/kelseyhightower/confd/backends/env"
 	"github.com/kelseyhightower/confd/backends/etcd"
 	"github.com/kelseyhightower/confd/backends/redis"
+	"github.com/kelseyhightower/confd/backends/fs"
 	"github.com/kelseyhightower/confd/backends/zookeeper"
 	"github.com/kelseyhightower/confd/log"
 )
@@ -39,6 +40,8 @@ func New(config Config) (StoreClient, error) {
 		return redis.NewRedisClient(backendNodes)
 	case "env":
 		return env.NewEnvClient()
+	case "fs":
+		return fs.NewFsClient(config.FsRootPath, config.FsMaxFileSize)
 	}
 	return nil, errors.New("Invalid backend")
 }

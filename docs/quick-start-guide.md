@@ -11,6 +11,7 @@ confd supports the following backends:
 * environment variables
 * redis
 * zookeeper
+* filesystem
 
 ### Add keys
 
@@ -52,6 +53,18 @@ redis-cli set /myapp/database/user rob
 [zk: localhost:2181(CONNECTED) 3] create /my_app/database/url "db.example.com"
 [zk: localhost:2181(CONNECTED) 4] create /my_app/database/user "rob"
 ```
+
+Please note that zookeeper backend doesn't support watch and values from znodes with children won't be retrieved.
+
+#### filesystem
+
+```
+mkdir -p /folder/my_app/database
+printf "db.example.com" > /folder/my_app/database/url
+printf "rob"            > /folder/my_app/database/user
+```
+
+`-fs-rootpath` is available to provide a custom root path, in the example above it would be used like this `-fs-rootpath="/folder"`.
 
 ### Create the confdir
 
