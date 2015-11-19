@@ -1,33 +1,19 @@
 language: go
 go:
-  - 1.4
+  - 1.5
   - tip
-services:
-  - redis
-before_install:
-  # install consul
-  - wget https://dl.bintray.com/mitchellh/consul/0.5.0_linux_amd64.zip
-  - unzip 0.5.0_linux_amd64.zip
-  - sudo mv consul /bin/
-  - consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul &
-  # install etcd
-  - wget https://github.com/coreos/etcd/releases/download/v2.0.9/etcd-v2.0.9-linux-amd64.tar.gz
-  - tar xzf etcd-v2.0.9-linux-amd64.tar.gz
-  - sudo mv etcd-v2.0.9-linux-amd64/etcd /bin/
-  - etcd &
-  # install DynamoDB
-  - mkdir /tmp/dynamodb
-  - wget -O - http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest | tar xz --directory /tmp/dynamodb
-  - java -Djava.library.path=/tmp/dynamodb/DynamoDBLocal_lib -jar /tmp/dynamodb/DynamoDBLocal.jar -inMemory &
-install:
-  - sudo pip install awscli
-  - go get github.com/constabulary/gb/...
-  - go get golang.org/x/tools/cmd/cover
-  - gb build all
-  - sudo ./install
 script:
-  - ./test
-  - bash integration/consul/test.sh
-  - bash integration/etcd/test.sh
-  - bash integration/fs/test.sh
-  - bash integration/redis/test.sh
+  - make static
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+      secure: "Dt3DD0nS3YhG1oZThnnfyTVitaBPVWzuYNYiVFeJJn8QsFiSw+PBUiQ8nG2rMikH73uw78epAzYPWgEodBbW+yRR7twH6ks55mWTAjIkmGrc7xamIab0gJCzSHcyu8U4QLiQ4eese6GlqOyYgBx8zG03kd9Lmqp+13imw0HSIDU="
+  file:
+    - ${TRAVIS_BUILD_DIR}/bin/renderizr-linux-amd64
+    - ${TRAVIS_BUILD_DIR}/bin/renderizr-darwin-amd64
+  on:
+    repo: glerchundi/renderizr
+    branch: master
+    tags: true
+    go: 1.5
