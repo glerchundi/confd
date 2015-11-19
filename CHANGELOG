@@ -1,1 +1,5 @@
 ### v0.1.0
+
+5e3665b don't ignore pkg folders except root's one
+6594804 add travis support
+5da10d4 renderizr first commit
