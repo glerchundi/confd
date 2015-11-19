@@ -1,3 +1,7 @@
+### v0.1.1
+
+d0dbc74 fix issues with chmod being more strict
+
 ### v0.1.0
 
 5e3665b don't ignore pkg folders except root's one
