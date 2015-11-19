@@ -20,6 +20,16 @@ func makeClient(t *testing.T) (*Client, *testutil.TestServer) {
 	return makeClientWithConfig(t, nil, nil)
 }
 
+func makeACLClient(t *testing.T) (*Client, *testutil.TestServer) {
+	return makeClientWithConfig(t, func(clientConfig *Config) {
+		clientConfig.Token = "root"
+	}, func(serverConfig *testutil.TestServerConfig) {
+		serverConfig.ACLMasterToken = "root"
+		serverConfig.ACLDatacenter = "dc1"
+		serverConfig.ACLDefaultPolicy = "deny"
+	})
+}
+
 func makeClientWithConfig(
 	t *testing.T,
 	cb1 configCallback,
@@ -117,6 +127,7 @@ func TestSetQueryOptions(t *testing.T) {
 		WaitIndex:         1000,
 		WaitTime:          100 * time.Second,
 		Token:             "12345",
+		Near:              "nodex",
 	}
 	r.setQueryOptions(q)
 
@@ -136,6 +147,9 @@ func TestSetQueryOptions(t *testing.T) {
 		t.Fatalf("bad: %v", r.params)
 	}
 	if r.params.Get("token") != "12345" {
+		t.Fatalf("bad: %v", r.params)
+	}
+	if r.params.Get("near") != "nodex" {
 		t.Fatalf("bad: %v", r.params)
 	}
 }

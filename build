@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-echo "Building confd..."
-gb build all
