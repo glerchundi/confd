@@ -124,24 +124,34 @@ func (t *Template) createStageFile(fileMode os.FileMode) (*os.File, error) {
 	}
 
 	// create TempFile in Dest directory to avoid cross-filesystem issues
-	temp, err := ioutil.TempFile(filepath.Dir(t.config.Dest), "."+filepath.Base(t.config.Dest))
+	tempFile, err := ioutil.TempFile(filepath.Dir(t.config.Dest), "."+filepath.Base(t.config.Dest))
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		tempFile.Close()
+		if !t.config.KeepStageFile {
+			os.Remove(tempFile.Name())
+		}
+	}()
+
+	if err = tmpl.Execute(tempFile, nil); err != nil {
+		return nil, err
+	}
+
+	// Set the owner, group, and mode on the stage file now to make it easier to
+	// compare against the destination configuration file later.
+	err = os.Chmod(tempFile.Name(), fileMode)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = tmpl.Execute(temp, nil); err != nil {
-		temp.Close()
-		os.Remove(temp.Name())
+	err = os.Chown(tempFile.Name(), t.config.Uid, t.config.Gid)
+	if err != nil {
 		return nil, err
 	}
-	defer temp.Close()
 
-	// Set the owner, group, and mode on the stage file now to make it easier to
-	// compare against the destination configuration file later.
-	os.Chmod(temp.Name(), fileMode)
-	os.Chown(temp.Name(), t.config.Uid, t.config.Gid)
-
-	return temp, nil
+	return tempFile, nil
 }
 
 // sync compares the staged and dest config files and attempts to sync them
@@ -151,9 +161,7 @@ func (t *Template) createStageFile(fileMode os.FileMode) (*os.File, error) {
 // It returns an error if any.
 func (t *Template) sync(stageFile *os.File, fileMode os.FileMode, doNoOp bool) error {
 	stageFileName := stageFile.Name()
-	if t.config.KeepStageFile {
-		glog.Infof("Keeping staged file: %s", stageFileName)
-	} else {
+	if !t.config.KeepStageFile {
 		defer os.Remove(stageFileName)
 	}
 

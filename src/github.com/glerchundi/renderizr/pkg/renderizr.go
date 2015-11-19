@@ -124,6 +124,7 @@ func Run(gc *config.GlobalConfig, bc config.BackendConfig) {
 		if lastErr == nil {
 			os.Exit(0)
 		}
+		glog.Errorf("%v", lastErr)
 		os.Exit(1)
 	}
 
@@ -241,7 +242,7 @@ func getTemplateConfigFromRecord(prefix string, record []string) (*config.Templa
 	}
 
 	if record[2] != "" {
-		parts := strings.Split(record[2], ",")
+		parts := strings.Split(record[2], ":")
 		if len(parts) != 2 {
 			return nil, fmt.Errorf("Owner should be provided as uid:gid")
 		}
