@@ -73,6 +73,7 @@ func (t *Template) Render(kvs map[string]string) error {
 	if err := t.sync(stageFile, fileMode, t.doNoOp); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -124,13 +125,14 @@ func (t *Template) createStageFile(fileMode os.FileMode) (*os.File, error) {
 	}
 
 	// create TempFile in Dest directory to avoid cross-filesystem issues
+	errorOcurred := true
 	tempFile, err := ioutil.TempFile(filepath.Dir(t.config.Dest), "."+filepath.Base(t.config.Dest))
 	if err != nil {
 		return nil, err
 	}
 	defer func() {
 		tempFile.Close()
-		if !t.config.KeepStageFile {
+		if !t.config.KeepStageFile && errorOcurred {
 			os.Remove(tempFile.Name())
 		}
 	}()
@@ -151,6 +153,7 @@ func (t *Template) createStageFile(fileMode os.FileMode) (*os.File, error) {
 		return nil, err
 	}
 
+	errorOcurred = false
 	return tempFile, nil
 }
 
