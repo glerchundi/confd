@@ -1,3 +1,8 @@
+### v0.1.2
+
+2fe661b don't remove file if chown/chmod were successful
+9fc0416 be more verbose with file not found errors
+
 ### v0.1.1
 
 d0dbc74 fix issues with chmod being more strict
