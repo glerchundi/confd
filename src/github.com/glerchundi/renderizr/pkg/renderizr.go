@@ -101,7 +101,7 @@ func Run(gc *config.GlobalConfig, bc config.BackendConfig) {
 
 	var lastErr error = nil
 	for _, tc := range tcs {
-		template := core.NewTemplate(tc, gc.NoOp, true)
+		template := core.NewTemplate(tc, gc.NoOp, gc.KeepStageFile, true)
 		processor := core.NewOnDemandProcessor(template, client)
 		if gc.Onetime {
 			if err := processor.Run(); err != nil {

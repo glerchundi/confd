@@ -11,6 +11,7 @@ type GlobalConfig struct {
 	Watch          bool
 	ResyncInterval time.Duration
 	NoOp           bool
+	KeepStageFile  bool
 }
 
 func NewGlobalConfig() *GlobalConfig {
@@ -21,5 +22,6 @@ func NewGlobalConfig() *GlobalConfig {
 		Watch:          false,
 		ResyncInterval: 60 * time.Second,
 		NoOp:           false,
+		KeepStageFile:  false,
 	}
 }

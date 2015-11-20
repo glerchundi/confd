@@ -10,7 +10,6 @@ type TemplateConfig struct {
 	Uid           int
 	Gid           int
 	Mode          string
-	KeepStageFile bool
 	Prefix        string
 	CheckCmd      string
 	ReloadCmd     string
@@ -23,7 +22,6 @@ func NewTemplateConfig() *TemplateConfig {
 		Uid:           0,
 		Gid:           0,
 		Mode:          "0644",
-		KeepStageFile: false,
 		Prefix:        "/",
 		CheckCmd:      "",
 		ReloadCmd:     "",

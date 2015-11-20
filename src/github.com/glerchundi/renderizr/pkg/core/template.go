@@ -23,15 +23,16 @@ import (
 
 // Template is the representation of a parsed template resource.
 type Template struct {
-	config    *config.TemplateConfig
-	funcMap   map[string]interface{}
-	store     memkv.Store
-	doNoOp    bool
-	useMutex  bool
-	mutex     *sync.Mutex
+	config        *config.TemplateConfig
+	funcMap       map[string]interface{}
+	store         memkv.Store
+	doNoOp        bool
+	keepStageFile bool
+	useMutex      bool
+	mutex         *sync.Mutex
 }
 
-func NewTemplate(config *config.TemplateConfig, doNoOp, useMutex bool) *Template {
+func NewTemplate(config *config.TemplateConfig, doNoOp, keepStageFile, useMutex bool) *Template {
 	store := memkv.New()
 	funcMap := newFuncMap()
 	for name, fn := range store.FuncMap {
@@ -43,6 +44,7 @@ func NewTemplate(config *config.TemplateConfig, doNoOp, useMutex bool) *Template
 		funcMap: funcMap,
 		store: store,
 		doNoOp: doNoOp,
+		keepStageFile: keepStageFile,
 		useMutex: useMutex,
 		mutex: &sync.Mutex{},
 	}
@@ -132,7 +134,7 @@ func (t *Template) createStageFile(fileMode os.FileMode) (*os.File, error) {
 	}
 	defer func() {
 		tempFile.Close()
-		if !t.config.KeepStageFile && errorOcurred {
+		if !t.keepStageFile && errorOcurred {
 			os.Remove(tempFile.Name())
 		}
 	}()
@@ -164,7 +166,7 @@ func (t *Template) createStageFile(fileMode os.FileMode) (*os.File, error) {
 // It returns an error if any.
 func (t *Template) sync(stageFile *os.File, fileMode os.FileMode, doNoOp bool) error {
 	stageFileName := stageFile.Name()
-	if !t.config.KeepStageFile {
+	if !t.keepStageFile {
 		defer os.Remove(stageFileName)
 	}
 

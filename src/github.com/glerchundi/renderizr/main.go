@@ -37,6 +37,7 @@ func AddGlobalFlags(fs *flag.FlagSet, gc *config.GlobalConfig) {
 	fs.BoolVar(&gc.Watch, "watch", gc.Watch, "Enable watch")
 	fs.DurationVar(&gc.ResyncInterval, "resync-interval", gc.ResyncInterval, "Backend polling resync interval")
 	fs.BoolVar(&gc.NoOp, "noop", gc.NoOp, "Only show pending changes")
+	fs.BoolVar(&gc.KeepStageFile, "keep-stage-file", gc.KeepStageFile, "Keep staged files")
 }
 
 func AddConsulFlags(fs *flag.FlagSet, cbc *config.ConsulBackendConfig) {

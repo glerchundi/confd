@@ -30,7 +30,6 @@ func NewOnDemandProcessor(template *Template, client store.Store) *OnDemandProce
 func (p *OnDemandProcessor) Run() error {
 	pairs, err := p.client.List(p.template.config.Prefix)
 	if err != nil {
-		println(err.Error())
 		return err
 	}
 
