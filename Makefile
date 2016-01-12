@@ -17,25 +17,25 @@ changelog:
 
 build:
 	@echo "Building renderizr..."
-	gb build all
+	@ROOTPATH=$(shell pwd -P); \
+	GO15VENDOREXPERIMENT=1 go build -o $$ROOTPATH/bin/renderizr
 
 test:
 	@echo "Running tests..."
-	gb test
+	GO15VENDOREXPERIMENT=1 go test
 
 static:
 	@echo "Building renderizr (static)..."
 	@ROOTPATH=$(shell pwd -P); \
 	mkdir -p $$ROOTPATH/bin; \
-	cd $$ROOTPATH/src/github.com/glerchundi/renderizr; \
-	GOPATH=$$ROOTPATH/vendor:$$ROOTPATH \
+	GO15VENDOREXPERIMENT=1 \
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 	  go build \
 	    -a -tags netgo -installsuffix cgo -ldflags '-extld ld -extldflags -static' -a -x \
 	    -o $$ROOTPATH/bin/renderizr-linux-amd64 \
 	    . \
 	; \
-	GOPATH=$$ROOTPATH/vendor:$$ROOTPATH \
+	GO15VENDOREXPERIMENT=1 \
 	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
 	  go build \
 	    -a -tags netgo -installsuffix cgo -ldflags '-extld ld -extldflags -static' -a -x \
